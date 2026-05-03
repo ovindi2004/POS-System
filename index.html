@@ -1,0 +1,1740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POS System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #818cf8;
+            --primary-dark: #6366f1;
+            --secondary: #a78bfa;
+            --success: #34d399;
+            --warning: #fbbf24;
+            --danger: #f87171;
+            --bg-base: #0f1117;
+            --bg-card: #1a1d2e;
+            --bg-card2: #1e2235;
+            --bg-input: #252840;
+            --border: #2d3148;
+            --border-light: #363a5a;
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --text-muted: #475569;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg-base);
+            color: var(--text-primary);
+            font-family: 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-base)
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-light);
+            border-radius: 3px
+        }
+
+        .hidden {
+            display: none !important
+        }
+
+        /* ── AUTH ── */
+        .auth-bg {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-image: radial-gradient(ellipse at 20% 50%, rgba(99, 102, 241, .12), transparent 60%)
+        }
+
+        .auth-box {
+            width: 100%;
+            max-width: 440px;
+            margin: 40px 20px;
+            padding: 40px;
+            border-radius: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, .5)
+        }
+
+        .logo-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--primary-dark), var(--secondary));
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #fff;
+            margin-bottom: 14px
+        }
+
+        /* ── APP LAYOUT ── */
+        .app-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ── SIDEBAR ── */
+        .sidebar {
+            width: 230px;
+            min-width: 230px;
+            background: var(--bg-card);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 200;
+            overflow-y: auto;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 20px 18px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .sidebar-logo-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--primary-dark), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .sidebar-logo-text {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .sidebar-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--success);
+            margin-left: auto;
+            flex-shrink: 0;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1
+            }
+            50% {
+                opacity: .35
+            }
+        }
+
+        .sidebar-section-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            padding: 18px 18px 6px;
+            font-weight: 600;
+        }
+
+        .sidebar-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 18px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            border-left: 3px solid transparent;
+            transition: all .15s;
+            user-select: none;
+            text-decoration: none;
+        }
+
+        .sidebar-nav-item:hover {
+            color: var(--text-primary);
+            background: rgba(129, 140, 248, .07);
+        }
+
+        .sidebar-nav-item.active {
+            color: var(--primary);
+            background: rgba(129, 140, 248, .12);
+            border-left-color: var(--primary);
+        }
+
+        .sidebar-nav-item i {
+            font-size: 15px;
+            width: 18px;
+            text-align: center;
+        }
+
+        #sidebar-logout:hover {
+            color: var(--danger) !important;
+            background: rgba(248, 113, 113, .08) !important;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            border-top: 1px solid var(--border);
+            padding: 14px 18px;
+        }
+
+        .sidebar-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-dark), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .sidebar-user-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .sidebar-user-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .sidebar-user-role {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* ── MAIN CONTENT ── */
+        .main-content {
+            margin-left: 230px;
+            flex: 1;
+            min-height: 100vh;
+            padding: 28px 28px;
+        }
+
+        /* ── STAT CARDS ── */
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            transition: all .25s;
+            position: relative;
+            overflow: hidden
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            opacity: 0;
+            transition: opacity .25s
+        }
+
+        .stat-card:hover {
+            border-color: var(--border-light);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, .3)
+        }
+
+        .stat-card:hover::before {
+            opacity: 1
+        }
+
+        /* ── FORMS ── */
+        .form-label {
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 500
+        }
+
+        .form-control, .form-select {
+            background: var(--bg-input) !important;
+            border: 1px solid var(--border) !important;
+            color: var(--text-primary) !important;
+            font-size: 14px;
+            transition: all .2s
+        }
+
+        .form-control::placeholder {
+            color: var(--text-muted) !important
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary) !important;
+            box-shadow: 0 0 0 3px rgba(129, 140, 248, .15) !important;
+            background: var(--bg-card2) !important;
+            outline: none
+        }
+
+        .form-select option {
+            background: var(--bg-card2);
+            color: var(--text-primary)
+        }
+
+        textarea.form-control {
+            resize: vertical
+        }
+
+        /* ── BUTTONS ── */
+        .btn {
+            font-size: 13px;
+            transition: all .2s
+        }
+
+        .btn:hover {
+            transform: translateY(-1px)
+        }
+
+        .btn:active {
+            transform: translateY(0)
+        }
+
+        .btn-primary {
+            background: var(--primary-dark);
+            border-color: var(--primary);
+            color: #fff
+        }
+
+        .btn-primary:hover {
+            background: var(--primary);
+            box-shadow: 0 4px 15px rgba(129, 140, 248, .3);
+            color: #fff
+        }
+
+        .btn-success {
+            background: rgba(52, 211, 153, .15);
+            border-color: rgba(52, 211, 153, .4);
+            color: var(--success)
+        }
+
+        .btn-success:hover {
+            background: rgba(52, 211, 153, .25);
+            color: var(--success)
+        }
+
+        .btn-danger {
+            background: rgba(248, 113, 113, .15);
+            border-color: rgba(248, 113, 113, .4);
+            color: var(--danger)
+        }
+
+        .btn-danger:hover {
+            background: rgba(248, 113, 113, .25);
+            color: var(--danger)
+        }
+
+        .btn-warning {
+            background: rgba(251, 191, 36, .15);
+            border-color: rgba(251, 191, 36, .4);
+            color: var(--warning)
+        }
+
+        .btn-warning:hover {
+            background: rgba(251, 191, 36, .25);
+            color: var(--warning)
+        }
+
+        .auth-box .btn-primary {
+            background: linear-gradient(135deg, var(--primary-dark), var(--secondary));
+            border: none;
+            color: #fff;
+            font-weight: 600;
+            padding: 12px
+        }
+
+        .auth-box .btn-success {
+            background: linear-gradient(135deg, #059669, var(--success));
+            border: none;
+            color: #fff;
+            font-weight: 600;
+            padding: 12px
+        }
+
+        /* ── TABLES ── */
+        .tbl-wrap {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            overflow: hidden
+        }
+
+        .table {
+            margin-bottom: 0;
+            color: var(--text-primary)
+        }
+
+        .table thead th {
+            background: var(--bg-card2);
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border) !important;
+            border-top: none !important;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: .5px
+        }
+
+        .table tbody td {
+            border-color: rgba(45, 49, 72, .5) !important;
+            vertical-align: middle;
+            font-size: 14px;
+            background: transparent
+        }
+
+        .table tbody tr {
+            transition: background .15s;
+            cursor: pointer
+        }
+
+        #customerTableBody tr:nth-child(6n+1) {
+            background: rgba(99, 102, 241, .18) !important
+        }
+
+        #customerTableBody tr:nth-child(6n+2) {
+            background: rgba(167, 139, 250, .14) !important
+        }
+
+        #customerTableBody tr:nth-child(6n+3) {
+            background: rgba(52, 211, 153, .12) !important
+        }
+
+        #customerTableBody tr:nth-child(6n+4) {
+            background: rgba(251, 191, 36, .11) !important
+        }
+
+        #customerTableBody tr:nth-child(6n+5) {
+            background: rgba(96, 165, 250, .14) !important
+        }
+
+        #customerTableBody tr:nth-child(6n+6) {
+            background: rgba(244, 114, 182, .11) !important
+        }
+
+        #customerTableBody tr:hover, #itemTableBody tr:hover,
+        #orderDetailsTableBody tr:hover, #orderItemTableBody tr:hover {
+            background: rgba(129, 140, 248, .3) !important
+        }
+
+        #itemTableBody tr:nth-child(4n+1) {
+            background: rgba(52, 211, 153, .14) !important
+        }
+
+        #itemTableBody tr:nth-child(4n+2) {
+            background: rgba(96, 165, 250, .13) !important
+        }
+
+        #itemTableBody tr:nth-child(4n+3) {
+            background: rgba(251, 191, 36, .11) !important
+        }
+
+        #itemTableBody tr:nth-child(4n+4) {
+            background: rgba(167, 139, 250, .13) !important
+        }
+
+        #orderDetailsTableBody tr:nth-child(odd) {
+            background: rgba(129, 140, 248, .13) !important
+        }
+
+        #orderDetailsTableBody tr:nth-child(even) {
+            background: rgba(251, 191, 36, .09) !important
+        }
+
+        #orderItemTableBody tr:nth-child(odd) {
+            background: rgba(52, 211, 153, .12) !important
+        }
+
+        #orderItemTableBody tr:nth-child(even) {
+            background: rgba(96, 165, 250, .11) !important
+        }
+
+        /* ── ORDER ── */
+        .order-card-header {
+            background: var(--bg-card2);
+            border-bottom: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-size: 13px
+        }
+
+        .order-card-header i {
+            color: var(--primary)
+        }
+
+        .total-box {
+            background: rgba(129, 140, 248, .08);
+            border: 1px solid rgba(129, 140, 248, .2)
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+                min-width: 200px;
+            }
+
+            .main-content {
+                margin-left: 200px;
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ══ AUTH ══ -->
+<section id="AuthSection">
+    <div class="auth-bg">
+
+        <div id="loginForm" class="auth-box">
+            <div class="text-center mb-4">
+                <div class="logo-icon"><i class="bi bi-box-seam"></i></div>
+                <h2 class="fs-5 fw-semibold mb-0">POS System</h2>
+                <p class="small mb-0" style="color:var(--text-muted)">Sign in to your account</p>
+            </div>
+            <form id="loginFormElement">
+                <div class="mb-3"><label class="form-label">Email Address</label>
+                    <input type="email" class="form-control rounded-3" id="loginEmail" placeholder="you@example.com"
+                           required>
+                </div>
+                <div class="mb-3"><label class="form-label">Password</label>
+                    <input type="password" class="form-control rounded-3" id="loginPassword" placeholder="••••••••"
+                           required>
+                </div>
+                <div class="d-grid mt-4">
+                    <button type="submit" class="btn btn-primary rounded-3 py-2">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>Login
+                    </button>
+                </div>
+                <p class="text-center small mt-3 mb-0" style="color:var(--text-secondary)">No account?
+                    <a id="showRegister" class="fw-semibold text-decoration-none"
+                       style="color:var(--primary);cursor:pointer">Register here</a>
+                </p>
+            </form>
+        </div>
+
+        <div id="registerForm" class="auth-box hidden">
+            <div class="text-center mb-4">
+                <div class="logo-icon" style="background:linear-gradient(135deg,#059669,var(--success))">
+                    <i class="bi bi-person-plus"></i>
+                </div>
+                <h2 class="fs-5 fw-semibold mb-0">Create Account</h2>
+                <p class="small mb-0" style="color:var(--text-muted)">Join POS System today</p>
+            </div>
+            <form id="registerFormElement">
+                <div class="mb-3"><label class="form-label">Username</label>
+                    <input type="text" class="form-control rounded-3" id="registerUsername" placeholder="Your name"
+                           required>
+                </div>
+                <div class="mb-3"><label class="form-label">Email Address</label>
+                    <input type="email" class="form-control rounded-3" id="registerEmail" placeholder="you@example.com"
+                           required>
+                </div>
+                <div class="mb-3"><label class="form-label">Password</label>
+                    <input type="password" class="form-control rounded-3" id="registerPassword" placeholder="••••••••"
+                           required>
+                </div>
+                <div class="mb-3"><label class="form-label">Confirm Password</label>
+                    <input type="password" class="form-control rounded-3" id="confirmPassword" placeholder="••••••••"
+                           required>
+                </div>
+                <div class="d-grid mt-4">
+                    <button type="submit" class="btn btn-success rounded-3 py-2">
+                        <i class="bi bi-person-check me-2"></i>Register
+                    </button>
+                </div>
+                <p class="text-center small mt-3 mb-0" style="color:var(--text-secondary)">Have account?
+                    <a id="showLogin" class="fw-semibold text-decoration-none"
+                       style="color:var(--primary);cursor:pointer">Login here</a>
+                </p>
+            </form>
+        </div>
+
+    </div>
+</section>
+
+<!-- ══ APP ══ -->
+<div id="AppSection" class="hidden">
+    <div class="app-layout">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <div class="sidebar-logo-icon"><i class="bi bi-box-seam"></i></div>
+                <span class="sidebar-logo-text">POS System</span>
+                <div class="sidebar-dot"></div>
+            </div>
+
+            <div class="sidebar-section-label">Main</div>
+            <a class="sidebar-nav-item active" id="home_nav">
+                <i class="bi bi-speedometer2"></i>Dashboard
+            </a>
+
+            <div class="sidebar-section-label">Management</div>
+            <a class="sidebar-nav-item" id="customer_nav">
+                <i class="bi bi-people"></i>Customers
+            </a>
+            <a class="sidebar-nav-item" id="item_nav">
+                <i class="bi bi-box-seam"></i>Inventory
+            </a>
+
+            <div class="sidebar-section-label">Sales</div>
+            <a class="sidebar-nav-item" id="order_nav">
+                <i class="bi bi-cart"></i>New Order
+            </a>
+            <a class="sidebar-nav-item" id="orderDetails_nav">
+                <i class="bi bi-receipt"></i>Order Details
+            </a>
+
+            <div class="sidebar-section-label">Account</div>
+            <a class="sidebar-nav-item" id="logout_nav" style="cursor:pointer">
+                <i class="bi bi-box-arrow-right"></i>Logout
+            </a>
+
+            <div class="sidebar-bottom">
+                <div class="sidebar-user">
+                    <div class="sidebar-avatar" id="sidebarAvatar">?</div>
+                    <div class="sidebar-user-info">
+                        <div class="sidebar-user-name" id="sidebarUsername">User</div>
+                        <div class="sidebar-user-role">Cashier</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+
+            <!-- DASHBOARD -->
+            <main id="HomeSection">
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <div class="rounded-1 flex-shrink-0"
+                         style="width:4px;height:24px;background:linear-gradient(180deg,var(--primary),var(--secondary))"></div>
+                    <h5 class="mb-0 fw-semibold"><i class="bi bi-speedometer2 me-2"></i>Dashboard Overview</h5>
+                </div>
+                <div class="row g-4 mb-4">
+                    <div class="col-md-4">
+                        <div class="stat-card rounded-4 p-4 h-100">
+                            <div class="d-flex align-items-center justify-content-center rounded-3 mb-3"
+                                 style="width:48px;height:48px;background:rgba(129,140,248,.12)">
+                                <i class="bi bi-people fs-5" style="color:var(--primary)"></i>
+                            </div>
+                            <div class="small fw-medium text-uppercase mb-1"
+                                 style="color:var(--text-muted);letter-spacing:.6px">Total Customers
+                            </div>
+                            <div class="fw-bold" style="font-size:32px;line-height:1" id="customerCount">0</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stat-card rounded-4 p-4 h-100">
+                            <div class="d-flex align-items-center justify-content-center rounded-3 mb-3"
+                                 style="width:48px;height:48px;background:rgba(52,211,153,.12)">
+                                <i class="bi bi-box-seam fs-5" style="color:var(--success)"></i>
+                            </div>
+                            <div class="small fw-medium text-uppercase mb-1"
+                                 style="color:var(--text-muted);letter-spacing:.6px">Products in Stock
+                            </div>
+                            <div class="fw-bold" style="font-size:32px;line-height:1" id="itemCount">0</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stat-card rounded-4 p-4 h-100">
+                            <div class="d-flex align-items-center justify-content-center rounded-3 mb-3"
+                                 style="width:48px;height:48px;background:rgba(251,191,36,.12)">
+                                <i class="bi bi-cart fs-5" style="color:var(--warning)"></i>
+                            </div>
+                            <div class="small fw-medium text-uppercase mb-1"
+                                 style="color:var(--text-muted);letter-spacing:.6px">Total Orders
+                            </div>
+                            <div class="fw-bold" style="font-size:32px;line-height:1" id="orderCount">0</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row g-4">
+                    <div class="col-lg-4">
+                        <div class="rounded-4 p-4 h-100"
+                             style="background:var(--bg-card);border:1px solid var(--border)">
+                            <div class="small fw-semibold text-uppercase mb-3 d-flex align-items-center gap-2"
+                                 style="color:var(--text-secondary);letter-spacing:.6px">
+                                <i class="bi bi-bar-chart-fill" style="color:var(--primary)"></i>Top Items by Stock
+                            </div>
+                            <div style="position:relative;height:220px">
+                                <canvas id="stockChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="rounded-4 p-4 h-100"
+                             style="background:var(--bg-card);border:1px solid var(--border)">
+                            <div class="small fw-semibold text-uppercase mb-3 d-flex align-items-center gap-2"
+                                 style="color:var(--text-secondary);letter-spacing:.6px">
+                                <i class="bi bi-pie-chart-fill" style="color:var(--primary)"></i>Revenue by Item
+                            </div>
+                            <div style="position:relative;height:220px">
+                                <canvas id="revenueChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="rounded-4 p-4 h-100"
+                             style="background:var(--bg-card);border:1px solid var(--border)">
+                            <div class="small fw-semibold text-uppercase mb-3 d-flex align-items-center gap-2"
+                                 style="color:var(--text-secondary);letter-spacing:.6px">
+                                <i class="bi bi-graph-up" style="color:var(--primary)"></i>Orders Over Time
+                            </div>
+                            <div style="position:relative;height:220px">
+                                <canvas id="ordersChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- CUSTOMERS -->
+            <main class="hidden" id="CustomerSection">
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <div class="rounded-1 flex-shrink-0"
+                         style="width:4px;height:24px;background:linear-gradient(180deg,var(--primary),var(--secondary))"></div>
+                    <h5 class="mb-0 fw-semibold"><i class="bi bi-people me-2"></i>Customer Management</h5>
+                </div>
+                <div class="row g-4">
+                    <div class="col-lg-6">
+                        <div class="rounded-4 p-4" style="background:var(--bg-card);border:1px solid var(--border)">
+                            <div class="mb-3"><label class="form-label">Customer ID</label>
+                                <input type="text" class="form-control rounded-3" id="customerId"
+                                       placeholder="Auto-generated">
+                            </div>
+                            <div class="mb-3"><label class="form-label">First Name</label>
+                                <input type="text" class="form-control rounded-3" id="firstName"
+                                       placeholder="Enter first name">
+                            </div>
+                            <div class="mb-3"><label class="form-label">Last Name</label>
+                                <input type="text" class="form-control rounded-3" id="lastName"
+                                       placeholder="Enter last name">
+                            </div>
+                            <div class="mb-3"><label class="form-label">Address</label>
+                                <textarea class="form-control rounded-3" id="address" style="height:80px"
+                                          placeholder="Enter address"></textarea>
+                            </div>
+                            <div class="mb-3"><label class="form-label">Email</label>
+                                <input type="text" class="form-control rounded-3" id="email" placeholder="Enter email">
+                            </div>
+                            <div class="mb-3"><label class="form-label">Contact Number</label>
+                                <input type="text" class="form-control rounded-3" id="contact"
+                                       placeholder="Enter contact number">
+                            </div>
+                            <div class="d-flex flex-wrap gap-2 justify-content-end mt-4">
+                                <button class="btn btn-success rounded-3" id="customerSaveButton"><i
+                                        class="bi bi-check-lg me-1"></i>Save
+                                </button>
+                                <button class="btn btn-primary rounded-3" id="customerUpdateButton"><i
+                                        class="bi bi-arrow-clockwise me-1"></i>Update
+                                </button>
+                                <button class="btn btn-danger rounded-3" id="customerDeleteButton"><i
+                                        class="bi bi-trash me-1"></i>Delete
+                                </button>
+                                <button class="btn btn-warning rounded-3" id="customerClearButton"><i
+                                        class="bi bi-arrow-repeat me-1"></i>Clear
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="rounded-4 p-3 mb-3"
+                             style="background:var(--bg-card);border:1px solid var(--border)">
+                            <div class="input-group">
+                                <input type="text" class="form-control rounded-start-3" id="customer_search"
+                                       placeholder="Search customer by name...">
+                                <button class="btn btn-warning rounded-end-3" id="customerSearchBtn"><i
+                                        class="bi bi-search me-1"></i>Search
+                                </button>
+                            </div>
+                        </div>
+                        <div class="tbl-wrap rounded-4">
+                            <table class="table table-hover mb-0">
+                                <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    <th>Email</th>
+                                    <th>Contact</th>
+                                </tr>
+                                </thead>
+                                <tbody id="customerTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- INVENTORY -->
+            <main class="hidden" id="ItemSection">
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <div class="rounded-1 flex-shrink-0"
+                         style="width:4px;height:24px;background:linear-gradient(180deg,var(--primary),var(--secondary))"></div>
+                    <h5 class="mb-0 fw-semibold"><i class="bi bi-box-seam me-2"></i>Inventory Management</h5>
+                </div>
+                <div class="row g-4">
+                    <div class="col-lg-6">
+                        <div class="rounded-4 p-4" style="background:var(--bg-card);border:1px solid var(--border)">
+                            <div class="mb-3"><label class="form-label">Item ID</label>
+                                <input type="text" class="form-control rounded-3" id="itemId"
+                                       placeholder="Auto-generated">
+                            </div>
+                            <div class="mb-3"><label class="form-label">Item Name</label>
+                                <input type="text" class="form-control rounded-3" id="itemName"
+                                       placeholder="Enter item name">
+                            </div>
+                            <div class="mb-3"><label class="form-label">Quantity</label>
+                                <input type="number" class="form-control rounded-3" id="Quantity"
+                                       placeholder="Enter quantity">
+                            </div>
+                            <div class="mb-3"><label class="form-label">Unit Price ($)</label>
+                                <input type="number" step="0.01" class="form-control rounded-3" id="UnitPrice"
+                                       placeholder="Enter unit price">
+                            </div>
+                            <div class="mb-3"><label class="form-label">Description</label>
+                                <textarea class="form-control rounded-3" id="Description" style="height:80px"
+                                          placeholder="Enter description"></textarea>
+                            </div>
+                            <div class="d-flex flex-wrap gap-2 justify-content-end mt-4">
+                                <button class="btn btn-success rounded-3" id="itemSaveButton"><i
+                                        class="bi bi-check-lg me-1"></i>Save
+                                </button>
+                                <button class="btn btn-primary rounded-3" id="itemUpdateButton"><i
+                                        class="bi bi-arrow-clockwise me-1"></i>Update
+                                </button>
+                                <button class="btn btn-danger rounded-3" id="itemDeleteButton"><i
+                                        class="bi bi-trash me-1"></i>Delete
+                                </button>
+                                <button class="btn btn-warning rounded-3" id="itemClearButton"><i
+                                        class="bi bi-arrow-repeat me-1"></i>Clear
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="rounded-4 p-3 mb-3"
+                             style="background:var(--bg-card);border:1px solid var(--border)">
+                            <div class="input-group">
+                                <input type="text" class="form-control rounded-start-3" id="item_search"
+                                       placeholder="Search item by name...">
+                                <button class="btn btn-warning rounded-end-3" id="itemSearchBtn"><i
+                                        class="bi bi-search me-1"></i>Search
+                                </button>
+                            </div>
+                        </div>
+                        <div class="tbl-wrap rounded-4">
+                            <table class="table table-hover mb-0">
+                                <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Qty</th>
+                                    <th>Unit Price</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody id="itemTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- ORDERS -->
+            <section class="hidden" id="OrderSection">
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <div class="rounded-1 flex-shrink-0"
+                         style="width:4px;height:24px;background:linear-gradient(180deg,var(--primary),var(--secondary))"></div>
+                    <h5 class="mb-0 fw-semibold"><i class="bi bi-cart me-2"></i>Order Management</h5>
+                </div>
+                <div class="row g-4 mb-4">
+                    <div class="col-lg-4">
+                        <div class="rounded-4 overflow-hidden h-100"
+                             style="background:var(--bg-card);border:1px solid var(--border)">
+                            <div class="order-card-header d-flex align-items-center gap-2 px-4 py-3 fw-medium">
+                                <i class="bi bi-receipt"></i>Invoice Details
+                            </div>
+                            <div class="p-4">
+                                <div class="mb-3"><label class="form-label">Order ID</label>
+                                    <input type="text" class="form-control rounded-3" id="orderID"
+                                           placeholder="Auto-generated">
+                                </div>
+                                <div class="mb-3"><label class="form-label">Date</label>
+                                    <input type="date" class="form-control rounded-3" id="date">
+                                </div>
+                                <div class="mb-3"><label class="form-label">Customer</label>
+                                    <select class="form-select rounded-3" id="orderCustomerID">
+                                        <option value="">Select Customer</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3"><label class="form-label">Customer Name</label>
+                                    <input type="text" class="form-control rounded-3" id="customerName"
+                                           placeholder="Auto-filled" readonly>
+                                </div>
+                                <div class="mb-3"><label class="form-label">Customer Address</label>
+                                    <input type="text" class="form-control rounded-3" id="customerAddress"
+                                           placeholder="Auto-filled" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="rounded-4 overflow-hidden h-100"
+                             style="background:var(--bg-card);border:1px solid var(--border)">
+                            <div class="order-card-header d-flex align-items-center gap-2 px-4 py-3 fw-medium">
+                                <i class="bi bi-box"></i>Item Details
+                            </div>
+                            <div class="p-4">
+                                <div class="mb-3"><label class="form-label">Item Code</label>
+                                    <select class="form-select rounded-3" id="orderItemID">
+                                        <option value="">Select Item</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3"><label class="form-label">Item Name</label>
+                                    <input type="text" class="form-control rounded-3" id="orderItemName"
+                                           placeholder="Auto-filled" readonly>
+                                </div>
+                                <div class="mb-3"><label class="form-label">Item Price ($)</label>
+                                    <input type="text" class="form-control rounded-3" id="orderItemPrice"
+                                           placeholder="Auto-filled" readonly>
+                                </div>
+                                <div class="mb-3"><label class="form-label">Available Quantity</label>
+                                    <input type="text" class="form-control rounded-3" id="itemQty"
+                                           placeholder="Auto-filled" readonly>
+                                </div>
+                                <div class="mb-3"><label class="form-label">Order Quantity</label>
+                                    <input type="number" class="form-control rounded-3" id="orderQty"
+                                           placeholder="Enter quantity" min="1">
+                                </div>
+                                <div class="d-grid">
+                                    <button class="btn btn-primary rounded-3" id="addItemButton">
+                                        <i class="bi bi-plus-circle me-1"></i>Add Item
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="rounded-4 overflow-hidden h-100"
+                             style="background:var(--bg-card);border:1px solid var(--border)">
+                            <div class="order-card-header d-flex align-items-center gap-2 px-4 py-3 fw-medium">
+                                <i class="bi bi-calculator"></i>Payment Summary
+                            </div>
+                            <div class="p-4">
+                                <div class="total-box rounded-3 p-4 text-center mb-4">
+                                    <div class="small fw-medium text-uppercase mb-2"
+                                         style="color:var(--text-muted);letter-spacing:1px">Total Amount
+                                    </div>
+                                    <div class="fw-bold" style="font-size:32px;color:var(--primary)" id="totalAmount">
+                                        $0.00
+                                    </div>
+                                </div>
+                                <div class="mb-3"><label class="form-label">Cash Amount ($)</label>
+                                    <input type="number" step="0.01" class="form-control rounded-3" id="cash"
+                                           placeholder="Enter cash amount">
+                                </div>
+                                <div class="mb-3"><label class="form-label">Discount (%)</label>
+                                    <input type="number" class="form-control rounded-3" id="discount" placeholder="0"
+                                           min="0" max="100" value="0">
+                                </div>
+                                <div class="mb-3"><label class="form-label">Balance ($)</label>
+                                    <input type="text" class="form-control rounded-3" id="balance"
+                                           placeholder="Auto-calculated" readonly>
+                                </div>
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-primary rounded-3" id="getBalance">
+                                        <i class="bi bi-calculator me-1"></i>Calculate Balance
+                                    </button>
+                                    <button class="btn btn-success rounded-3" id="placeOrderButton">
+                                        <i class="bi bi-check-lg me-1"></i>Place Order
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tbl-wrap rounded-4">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                        <tr>
+                            <th>Item Code</th>
+                            <th>Item Name</th>
+                            <th>Item Price</th>
+                            <th>Order Quantity</th>
+                            <th>Total Price</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody id="orderItemTableBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ORDER DETAILS -->
+            <main class="hidden" id="OrderDetailsSection">
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <div class="rounded-1 flex-shrink-0"
+                         style="width:4px;height:24px;background:linear-gradient(180deg,var(--primary),var(--secondary))"></div>
+                    <h5 class="mb-0 fw-semibold"><i class="bi bi-receipt me-2"></i>Order Details</h5>
+                </div>
+                <div class="rounded-4 p-3 mb-3" style="background:var(--bg-card);border:1px solid var(--border)">
+                    <div class="input-group">
+                        <input type="text" class="form-control rounded-start-3" id="order_search"
+                               placeholder="Search by Order ID or Customer ID...">
+                        <button class="btn btn-warning rounded-end-3" id="orderSearchBtn">
+                            <i class="bi bi-search me-1"></i>Search
+                        </button>
+                    </div>
+                </div>
+                <div class="tbl-wrap rounded-4">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Date</th>
+                            <th>Customer ID</th>
+                            <th>Item ID</th>
+                            <th>Order Qty</th>
+                            <th>Total</th>
+                            <th>Cash</th>
+                            <th>Discount</th>
+                            <th>Balance</th>
+                        </tr>
+                        </thead>
+                        <tbody id="orderDetailsTableBody"></tbody>
+                    </table>
+                </div>
+            </main>
+
+        </div><!-- /main-content -->
+    </div><!-- /app-layout -->
+</div><!-- /AppSection -->
+
+<script>
+    const db = {
+        get: k => JSON.parse(localStorage.getItem(k) || '[]'),
+        set: (k, v) => localStorage.setItem(k, JSON.stringify(v))
+    };
+
+    function genId(p) {
+        return p + '-' + Date.now().toString().slice(-6);
+    }
+
+    function toast(icon, title, text = '') {
+        Swal.fire({
+            icon, title, text,
+            timer: 2200, timerProgressBar: true, showConfirmButton: false,
+            background: '#1a1d2e', color: '#e2e8f0',
+            iconColor: icon === 'success' ? '#34d399' : icon === 'error' ? '#f87171' : '#fbbf24'
+        });
+    }
+
+    function confirmDlg(title, text, cb) {
+        Swal.fire({
+            title, text, icon: 'warning',
+            showCancelButton: true, confirmButtonText: 'Yes', cancelButtonText: 'Cancel',
+            background: '#1a1d2e', color: '#e2e8f0',
+            confirmButtonColor: '#6366f1', cancelButtonColor: '#374151'
+        }).then(r => {
+            if (r.isConfirmed) cb();
+        });
+    }
+
+    /* ── CHARTS ── */
+    let stockChart, revenueChart, ordersChart;
+    const CHART_COLORS = ['#818cf8', '#34d399', '#fbbf24', '#f472b6', '#60a5fa', '#f87171', '#a78bfa', '#2dd4bf'];
+
+    function buildCharts() {
+        const items = db.get('pos_items');
+        const orders = db.get('pos_orders');
+
+        const top = [...items].sort((a, b) => b.qty - a.qty).slice(0, 6);
+        if (stockChart) stockChart.destroy();
+        stockChart = new Chart(document.getElementById('stockChart'), {
+            type: 'bar',
+            data: {
+                labels: top.map(i => i.name || i.id),
+                datasets: [{
+                    label: 'Stock Qty', data: top.map(i => i.qty),
+                    backgroundColor: CHART_COLORS.map(c => c + '99'), borderColor: CHART_COLORS,
+                    borderWidth: 1.5, borderRadius: 6
+                }]
+            },
+            options: {
+                indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+                plugins: {legend: {display: false}, tooltip: {callbacks: {label: c => ' ' + c.parsed.x + ' units'}}},
+                scales: {
+                    x: {ticks: {color: '#94a3b8', font: {size: 11}}, grid: {color: 'rgba(45,49,72,0.6)'}},
+                    y: {ticks: {color: '#e2e8f0', font: {size: 11}}, grid: {display: false}}
+                }
+            }
+        });
+
+        const revMap = {};
+        orders.forEach(o => {
+            revMap[o.itemId] = (revMap[o.itemId] || 0) + parseFloat(o.total);
+        });
+        const revItems = Object.keys(revMap);
+        const revVals = revItems.map(k => revMap[k]);
+        const revLabels = revItems.map(id => {
+            const it = items.find(i => i.id === id);
+            return it ? it.name : id;
+        });
+        if (revenueChart) revenueChart.destroy();
+        revenueChart = new Chart(document.getElementById('revenueChart'), {
+            type: 'doughnut',
+            data: {
+                labels: revLabels.length ? revLabels : ['No orders yet'],
+                datasets: [{
+                    data: revVals.length ? revVals : [1],
+                    backgroundColor: revVals.length ? CHART_COLORS.map(c => c + 'cc') : ['#2d3148'],
+                    borderColor: '#1a1d2e', borderWidth: 3, hoverOffset: 6
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false, cutout: '62%',
+                plugins: {legend: {display: false}, tooltip: {callbacks: {label: c => ` $${c.parsed.toFixed(2)}`}}}
+            }
+        });
+
+        const days = 7, labels = [], counts = [];
+        for (let i = days - 1; i >= 0; i--) {
+            const d = new Date();
+            d.setDate(d.getDate() - i);
+            const ds = d.toISOString().slice(0, 10);
+            labels.push(ds.slice(5));
+            const seen = new Set();
+            orders.forEach(o => {
+                if (o.date === ds) seen.add(o.orderId);
+            });
+            counts.push(seen.size);
+        }
+        if (ordersChart) ordersChart.destroy();
+        ordersChart = new Chart(document.getElementById('ordersChart'), {
+            type: 'line',
+            data: {
+                labels,
+                datasets: [{
+                    label: 'Orders', data: counts,
+                    borderColor: '#818cf8', backgroundColor: 'rgba(129,140,248,0.12)',
+                    borderWidth: 2, pointBackgroundColor: '#818cf8', pointRadius: 4, pointHoverRadius: 6,
+                    fill: true, tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: {legend: {display: false}, tooltip: {callbacks: {label: c => ` ${c.parsed.y} orders`}}},
+                scales: {
+                    x: {ticks: {color: '#94a3b8', font: {size: 11}}, grid: {color: 'rgba(45,49,72,0.5)'}},
+                    y: {
+                        ticks: {color: '#94a3b8', font: {size: 11}, stepSize: 1},
+                        grid: {color: 'rgba(45,49,72,0.5)'},
+                        min: 0
+                    }
+                }
+            }
+        });
+    }
+
+    /* ── AUTH ── */
+    document.getElementById('loginFormElement').addEventListener('submit', e => {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value.trim();
+        const pass = document.getElementById('loginPassword').value;
+        const users = db.get('pos_users');
+        const user = users.find(u => u.email === email && u.password === pass);
+        if (user) {
+            localStorage.setItem('currentUser', JSON.stringify(user));
+            showApp(user);
+            toast('success', 'Welcome back!', user.username);
+        } else toast('error', 'Login Failed', 'Invalid email or password');
+    });
+
+    document.getElementById('registerFormElement').addEventListener('submit', e => {
+        e.preventDefault();
+        const username = document.getElementById('registerUsername').value.trim();
+        const email = document.getElementById('registerEmail').value.trim();
+        const pass = document.getElementById('registerPassword').value;
+        const conf = document.getElementById('confirmPassword').value;
+        if (!username || !email || !pass) {
+            toast('error', 'Error', 'Please fill in all fields');
+            return;
+        }
+        if (pass !== conf) {
+            toast('error', 'Error', 'Passwords do not match');
+            return;
+        }
+        const users = db.get('pos_users');
+        if (users.find(u => u.email === email)) {
+            toast('error', 'Error', 'Email already registered');
+            return;
+        }
+        users.push({id: genId('USR'), username, email, password: pass});
+        db.set('pos_users', users);
+        toast('success', 'Registered!', 'You can now login');
+        showLoginForm();
+    });
+
+    document.getElementById('showRegister').addEventListener('click', showRegisterForm);
+    document.getElementById('showLogin').addEventListener('click', showLoginForm);
+
+    function showLoginForm() {
+        document.getElementById('loginForm').classList.remove('hidden');
+        document.getElementById('registerForm').classList.add('hidden');
+        document.getElementById('loginFormElement').reset();
+    }
+
+    function showRegisterForm() {
+        document.getElementById('loginForm').classList.add('hidden');
+        document.getElementById('registerForm').classList.remove('hidden');
+        document.getElementById('registerFormElement').reset();
+    }
+
+    function showApp(user) {
+        if (!user) user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        document.getElementById('AuthSection').classList.add('hidden');
+        document.getElementById('AppSection').classList.remove('hidden');
+        // Set sidebar user info
+        const name = user.username || 'User';
+        document.getElementById('sidebarUsername').textContent = name;
+        document.getElementById('sidebarAvatar').textContent = name.slice(0, 2).toUpperCase();
+        updateDashboard();
+        loadCustomerDropdown();
+        loadItemDropdown();
+        generateOrderId();
+        document.getElementById('date').valueAsDate = new Date();
+    }
+
+    function showAuth() {
+        document.getElementById('AuthSection').classList.remove('hidden');
+        document.getElementById('AppSection').classList.add('hidden');
+        showLoginForm();
+    }
+
+    (function () {
+        const u = localStorage.getItem('currentUser');
+        if (u) showApp(JSON.parse(u)); else showAuth();
+    })();
+
+    /* ── SIDEBAR NAV ── */
+    const sections = {
+        home: document.getElementById('HomeSection'),
+        customer: document.getElementById('CustomerSection'),
+        item: document.getElementById('ItemSection'),
+        order: document.getElementById('OrderSection'),
+        orderDetails: document.getElementById('OrderDetailsSection')
+    };
+
+    const navMap = {
+        home_nav: 'home',
+        customer_nav: 'customer',
+        item_nav: 'item',
+        order_nav: 'order',
+        orderDetails_nav: 'orderDetails'
+    };
+
+    function showSection(name) {
+        Object.values(sections).forEach(s => s.classList.add('hidden'));
+        sections[name].classList.remove('hidden');
+        document.querySelectorAll('.sidebar-nav-item').forEach(l => l.classList.remove('active'));
+        const navId = Object.keys(navMap).find(k => navMap[k] === name);
+        if (navId) document.getElementById(navId).classList.add('active');
+        if (name === 'home') updateDashboard();
+        if (name === 'order') {
+            loadCustomerDropdown();
+            loadItemDropdown();
+            generateOrderId();
+            document.getElementById('date').valueAsDate = new Date();
+        }
+        if (name === 'orderDetails') renderOrderDetails();
+    }
+
+    Object.keys(navMap).forEach(id => {
+        document.getElementById(id).addEventListener('click', () => showSection(navMap[id]));
+    });
+
+    document.getElementById('logout_nav').addEventListener('click', () => {
+        confirmDlg('Logout?', 'Are you sure you want to logout?', () => {
+            localStorage.removeItem('currentUser');
+            showAuth();
+            toast('success', 'Logged out');
+        });
+    });
+
+    /* ── DASHBOARD ── */
+    function updateDashboard() {
+        document.getElementById('customerCount').textContent = db.get('pos_customers').length;
+        document.getElementById('itemCount').textContent = db.get('pos_items').length;
+        document.getElementById('orderCount').textContent = db.get('pos_orders').length;
+        setTimeout(buildCharts, 50);
+    }
+
+    /* ── CUSTOMERS ── */
+    function renderCustomers(list) {
+        const tbody = document.getElementById('customerTableBody');
+        if (!list) list = db.get('pos_customers');
+        tbody.innerHTML = list.length
+            ? list.map(c => `<tr onclick="selectCustomer('${c.id}')">
+        <td><span style="color:var(--primary);font-size:12px">${c.id}</span></td>
+        <td>${c.firstName}</td><td>${c.lastName}</td><td>${c.email}</td><td>${c.contact}</td>
+      </tr>`).join('')
+            : `<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:30px">No customers found</td></tr>`;
+    }
+
+    function selectCustomer(id) {
+        const c = db.get('pos_customers').find(x => x.id === id);
+        if (!c) return;
+        document.getElementById('customerId').value = c.id;
+        document.getElementById('firstName').value = c.firstName;
+        document.getElementById('lastName').value = c.lastName;
+        document.getElementById('address').value = c.address;
+        document.getElementById('email').value = c.email;
+        document.getElementById('contact').value = c.contact;
+    }
+
+    function clearCustomerForm() {
+        ['customerId', 'firstName', 'lastName', 'address', 'email', 'contact'].forEach(id => document.getElementById(id).value = '');
+        document.getElementById('customerId').value = genId('C');
+    }
+
+    document.getElementById('customerSaveButton').addEventListener('click', () => {
+        const fn = document.getElementById('firstName').value.trim();
+        const ln = document.getElementById('lastName').value.trim();
+        const em = document.getElementById('email').value.trim();
+        const ct = document.getElementById('contact').value.trim();
+        if (!fn || !ln || !em || !ct) {
+            toast('warning', 'Required', 'Fill First Name, Last Name, Email & Contact');
+            return;
+        }
+        const customers = db.get('pos_customers');
+        const id = document.getElementById('customerId').value.trim() || genId('C');
+        if (customers.find(c => c.id === id)) {
+            toast('error', 'Exists', 'Customer ID already exists. Use Update.');
+            return;
+        }
+        customers.push({
+            id,
+            firstName: fn,
+            lastName: ln,
+            address: document.getElementById('address').value.trim(),
+            email: em,
+            contact: ct
+        });
+        db.set('pos_customers', customers);
+        renderCustomers();
+        clearCustomerForm();
+        toast('success', 'Customer Saved!');
+    });
+
+    document.getElementById('customerUpdateButton').addEventListener('click', () => {
+        const id = document.getElementById('customerId').value.trim();
+        if (!id) {
+            toast('warning', 'Select', 'Click a row to select a customer first');
+            return;
+        }
+        const customers = db.get('pos_customers');
+        const idx = customers.findIndex(c => c.id === id);
+        if (idx === -1) {
+            toast('error', 'Not Found', 'Customer not found');
+            return;
+        }
+        customers[idx] = {
+            id,
+            firstName: document.getElementById('firstName').value.trim(),
+            lastName: document.getElementById('lastName').value.trim(),
+            address: document.getElementById('address').value.trim(),
+            email: document.getElementById('email').value.trim(),
+            contact: document.getElementById('contact').value.trim()
+        };
+        db.set('pos_customers', customers);
+        renderCustomers();
+        toast('success', 'Customer Updated!');
+    });
+
+    document.getElementById('customerDeleteButton').addEventListener('click', () => {
+        const id = document.getElementById('customerId').value.trim();
+        if (!id) {
+            toast('warning', 'Select', 'Click a row to select a customer first');
+            return;
+        }
+        confirmDlg('Delete Customer?', 'This cannot be undone.', () => {
+            db.set('pos_customers', db.get('pos_customers').filter(c => c.id !== id));
+            renderCustomers();
+            clearCustomerForm();
+            toast('success', 'Customer Deleted!');
+        });
+    });
+
+    document.getElementById('customerClearButton').addEventListener('click', clearCustomerForm);
+
+    document.getElementById('customerSearchBtn').addEventListener('click', () => {
+        const q = document.getElementById('customer_search').value.trim().toLowerCase();
+        if (!q) {
+            renderCustomers();
+            return;
+        }
+        renderCustomers(db.get('pos_customers').filter(c =>
+            (c.firstName + ' ' + c.lastName).toLowerCase().includes(q) || c.email.toLowerCase().includes(q)
+        ));
+    });
+
+    document.getElementById('customer_search').addEventListener('keyup', e => {
+        if (e.key === 'Enter') document.getElementById('customerSearchBtn').click();
+        if (!e.target.value) renderCustomers();
+    });
+
+    document.getElementById('customerId').value = genId('C');
+    renderCustomers();
+
+    /* ── INVENTORY ── */
+    function renderItems(list) {
+        const tbody = document.getElementById('itemTableBody');
+        if (!list) list = db.get('pos_items');
+        tbody.innerHTML = list.length
+            ? list.map(i => `<tr onclick="selectItem('${i.id}')">
+        <td><span style="color:var(--success);font-size:12px">${i.id}</span></td>
+        <td>${i.name}</td><td>${i.qty}</td>
+        <td>$${parseFloat(i.price).toFixed(2)}</td>
+        <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${i.desc}</td>
+      </tr>`).join('')
+            : `<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:30px">No items found</td></tr>`;
+    }
+
+    function selectItem(id) {
+        const it = db.get('pos_items').find(x => x.id === id);
+        if (!it) return;
+        document.getElementById('itemId').value = it.id;
+        document.getElementById('itemName').value = it.name;
+        document.getElementById('Quantity').value = it.qty;
+        document.getElementById('UnitPrice').value = it.price;
+        document.getElementById('Description').value = it.desc;
+    }
+
+    function clearItemForm() {
+        ['itemId', 'itemName', 'Quantity', 'UnitPrice', 'Description'].forEach(id => document.getElementById(id).value = '');
+        document.getElementById('itemId').value = genId('I');
+    }
+
+    document.getElementById('itemSaveButton').addEventListener('click', () => {
+        const name = document.getElementById('itemName').value.trim();
+        const qty = document.getElementById('Quantity').value.trim();
+        const price = document.getElementById('UnitPrice').value.trim();
+        if (!name || !qty || !price) {
+            toast('warning', 'Required', 'Fill Item Name, Quantity & Price');
+            return;
+        }
+        const items = db.get('pos_items');
+        const id = document.getElementById('itemId').value.trim() || genId('I');
+        if (items.find(i => i.id === id)) {
+            toast('error', 'Exists', 'Item ID already exists. Use Update.');
+            return;
+        }
+        items.push({
+            id,
+            name,
+            qty: parseInt(qty),
+            price: parseFloat(price),
+            desc: document.getElementById('Description').value.trim()
+        });
+        db.set('pos_items', items);
+        renderItems();
+        clearItemForm();
+        toast('success', 'Item Saved!');
+    });
+
+    document.getElementById('itemUpdateButton').addEventListener('click', () => {
+        const id = document.getElementById('itemId').value.trim();
+        if (!id) {
+            toast('warning', 'Select', 'Click a row to select an item first');
+            return;
+        }
+        const items = db.get('pos_items');
+        const idx = items.findIndex(i => i.id === id);
+        if (idx === -1) {
+            toast('error', 'Not Found', 'Item not found');
+            return;
+        }
+        items[idx] = {
+            id,
+            name: document.getElementById('itemName').value.trim(),
+            qty: parseInt(document.getElementById('Quantity').value),
+            price: parseFloat(document.getElementById('UnitPrice').value),
+            desc: document.getElementById('Description').value.trim()
+        };
+        db.set('pos_items', items);
+        renderItems();
+        toast('success', 'Item Updated!');
+    });
+
+    document.getElementById('itemDeleteButton').addEventListener('click', () => {
+        const id = document.getElementById('itemId').value.trim();
+        if (!id) {
+            toast('warning', 'Select', 'Click a row to select an item first');
+            return;
+        }
+        confirmDlg('Delete Item?', 'This cannot be undone.', () => {
+            db.set('pos_items', db.get('pos_items').filter(i => i.id !== id));
+            renderItems();
+            clearItemForm();
+            toast('success', 'Item Deleted!');
+        });
+    });
+
+    document.getElementById('itemClearButton').addEventListener('click', clearItemForm);
+
+    document.getElementById('itemSearchBtn').addEventListener('click', () => {
+        const q = document.getElementById('item_search').value.trim().toLowerCase();
+        if (!q) {
+            renderItems();
+            return;
+        }
+        renderItems(db.get('pos_items').filter(i => i.name.toLowerCase().includes(q) || i.id.toLowerCase().includes(q)));
+    });
+
+    document.getElementById('item_search').addEventListener('keyup', e => {
+        if (e.key === 'Enter') document.getElementById('itemSearchBtn').click();
+        if (!e.target.value) renderItems();
+    });
+
+    document.getElementById('itemId').value = genId('I');
+    renderItems();
+
+    /* ── ORDERS ── */
+    let currentOrderItems = [];
+
+    function generateOrderId() {
+        document.getElementById('orderID').value = genId('ORD');
+    }
+
+    function loadCustomerDropdown() {
+        const sel = document.getElementById('orderCustomerID');
+        sel.innerHTML = '<option value="">Select Customer</option>' +
+            db.get('pos_customers').map(c => `<option value="${c.id}">${c.id} — ${c.firstName} ${c.lastName}</option>`).join('');
+    }
+
+    function loadItemDropdown() {
+        const sel = document.getElementById('orderItemID');
+        sel.innerHTML = '<option value="">Select Item</option>' +
+            db.get('pos_items').map(i => `<option value="${i.id}">${i.id} — ${i.name} ($${parseFloat(i.price).toFixed(2)})</option>`).join('');
+    }
+
+    document.getElementById('orderCustomerID').addEventListener('change', function () {
+        const c = db.get('pos_customers').find(x => x.id === this.value);
+        document.getElementById('customerName').value = c ? `${c.firstName} ${c.lastName}` : '';
+        document.getElementById('customerAddress').value = c ? c.address : '';
+    });
+
+    document.getElementById('orderItemID').addEventListener('change', function () {
+        const it = db.get('pos_items').find(x => x.id === this.value);
+        document.getElementById('orderItemName').value = it ? it.name : '';
+        document.getElementById('orderItemPrice').value = it ? `$${parseFloat(it.price).toFixed(2)}` : '';
+        document.getElementById('itemQty').value = it ? it.qty : '';
+        document.getElementById('orderQty').value = '';
+    });
+
+    function calcTotal() {
+        return currentOrderItems.reduce((s, i) => s + i.total, 0);
+    }
+
+    function renderOrderCart() {
+        const tbody = document.getElementById('orderItemTableBody');
+        tbody.innerHTML = currentOrderItems.length
+            ? currentOrderItems.map((item, idx) => `<tr>
+        <td><span style="color:var(--success);font-size:12px">${item.itemId}</span></td>
+        <td>${item.name}</td>
+        <td>$${parseFloat(item.price).toFixed(2)}</td>
+        <td>${item.qty}</td>
+        <td style="color:var(--warning);font-weight:600">$${item.total.toFixed(2)}</td>
+        <td><button class="btn btn-danger btn-sm py-1 px-2" onclick="removeOrderItem(${idx})"><i class="bi bi-trash"></i></button></td>
+      </tr>`).join('')
+            : `<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:20px">No items added</td></tr>`;
+        document.getElementById('totalAmount').textContent = '$' + calcTotal().toFixed(2);
+    }
+
+    function removeOrderItem(idx) {
+        currentOrderItems.splice(idx, 1);
+        renderOrderCart();
+    }
+
+    document.getElementById('addItemButton').addEventListener('click', () => {
+        const itemId = document.getElementById('orderItemID').value;
+        const qtyVal = parseInt(document.getElementById('orderQty').value);
+        if (!itemId) {
+            toast('warning', 'Select Item', 'Choose an item from the dropdown');
+            return;
+        }
+        if (!qtyVal || qtyVal <= 0) {
+            toast('warning', 'Quantity', 'Enter a valid order quantity');
+            return;
+        }
+        const it = db.get('pos_items').find(x => x.id === itemId);
+        if (!it) {
+            toast('error', 'Not Found', 'Item not found');
+            return;
+        }
+        if (qtyVal > it.qty) {
+            toast('error', 'Out of Stock', `Only ${it.qty} units available`);
+            return;
+        }
+        const existing = currentOrderItems.find(x => x.itemId === itemId);
+        if (existing) {
+            existing.qty += qtyVal;
+            existing.total = existing.qty * existing.price;
+        } else currentOrderItems.push({
+            itemId,
+            name: it.name,
+            price: parseFloat(it.price),
+            qty: qtyVal,
+            total: parseFloat(it.price) * qtyVal
+        });
+        renderOrderCart();
+        document.getElementById('orderQty').value = '';
+        toast('success', 'Item Added');
+    });
+
+    document.getElementById('getBalance').addEventListener('click', () => {
+        const total = calcTotal();
+        const discount = parseFloat(document.getElementById('discount').value) || 0;
+        const cash = parseFloat(document.getElementById('cash').value) || 0;
+        const netTotal = total * (1 - discount / 100);
+        const balance = cash - netTotal;
+        document.getElementById('balance').value = balance >= 0 ? '$' + balance.toFixed(2) : '-$' + Math.abs(balance).toFixed(2);
+        if (cash < netTotal) toast('warning', 'Insufficient Cash', `Need $${netTotal.toFixed(2)}, got $${cash.toFixed(2)}`);
+    });
+
+    document.getElementById('placeOrderButton').addEventListener('click', () => {
+        const orderId = document.getElementById('orderID').value;
+        const custId = document.getElementById('orderCustomerID').value;
+        const date = document.getElementById('date').value;
+        const cash = parseFloat(document.getElementById('cash').value) || 0;
+        const discount = parseFloat(document.getElementById('discount').value) || 0;
+        if (!custId) {
+            toast('warning', 'Customer', 'Select a customer');
+            return;
+        }
+        if (!date) {
+            toast('warning', 'Date', 'Select a date');
+            return;
+        }
+        if (!currentOrderItems.length) {
+            toast('warning', 'Items', 'Add at least one item');
+            return;
+        }
+        const total = calcTotal();
+        const netTotal = total * (1 - discount / 100);
+        if (cash < netTotal) {
+            toast('error', 'Insufficient Cash', 'Calculate balance first');
+            return;
+        }
+        const items = db.get('pos_items');
+        currentOrderItems.forEach(oi => {
+            const idx = items.findIndex(x => x.id === oi.itemId);
+            if (idx !== -1) items[idx].qty -= oi.qty;
+        });
+        db.set('pos_items', items);
+        renderItems();
+        const orders = db.get('pos_orders');
+        currentOrderItems.forEach(oi => {
+            orders.push({
+                orderId, date, custId, itemId: oi.itemId, qty: oi.qty,
+                total: oi.total.toFixed(2), cash: cash.toFixed(2), discount,
+                balance: (cash - netTotal).toFixed(2)
+            });
+        });
+        db.set('pos_orders', orders);
+        toast('success', 'Order Placed!', `Order ${orderId} saved successfully`);
+        currentOrderItems = [];
+        renderOrderCart();
+        ['cash', 'orderCustomerID', 'customerName', 'customerAddress', 'orderItemID', 'orderItemName', 'orderItemPrice', 'itemQty']
+            .forEach(id => document.getElementById(id).value = '');
+        document.getElementById('discount').value = '0';
+        document.getElementById('balance').value = '';
+        document.getElementById('totalAmount').textContent = '$0.00';
+        generateOrderId();
+        document.getElementById('date').valueAsDate = new Date();
+        loadItemDropdown();
+    });
+
+    /* ── ORDER DETAILS ── */
+    function renderOrderDetails(list) {
+        const tbody = document.getElementById('orderDetailsTableBody');
+        if (!list) list = db.get('pos_orders');
+        tbody.innerHTML = list.length
+            ? list.map(o => `<tr>
+        <td><span style="color:var(--primary);font-size:12px">${o.orderId}</span></td>
+        <td>${o.date}</td><td>${o.custId}</td><td>${o.itemId}</td><td>${o.qty}</td>
+        <td style="color:var(--warning)">$${o.total}</td>
+        <td>$${o.cash}</td>
+        <td>${o.discount}%</td>
+        <td style="color:var(--success)">$${o.balance}</td>
+      </tr>`).join('')
+            : `<tr><td colspan="9" style="text-align:center;color:var(--text-muted);padding:30px">No orders found</td></tr>`;
+    }
+
+    document.getElementById('orderSearchBtn').addEventListener('click', () => {
+        const q = document.getElementById('order_search').value.trim().toLowerCase();
+        if (!q) {
+            renderOrderDetails();
+            return;
+        }
+        renderOrderDetails(db.get('pos_orders').filter(o =>
+            o.orderId.toLowerCase().includes(q) || o.custId.toLowerCase().includes(q)
+        ));
+    });
+
+    document.getElementById('order_search').addEventListener('keyup', e => {
+        if (e.key === 'Enter') document.getElementById('orderSearchBtn').click();
+        if (!e.target.value) renderOrderDetails();
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+</body>
+</html>
