@@ -1,5 +1,5 @@
 // ── MAIN APP ENTRY POINT ──
-import AuthController from './AuthController.js';
+import LoginController from './LoginController.js';
 import DashboardController from './DashboardController.js';
 import CustomerController from './CustomerController.js';
 import ItemController from './ItemController.js';
@@ -56,11 +56,11 @@ function showApp(user) {
 function showAuth() {
     document.getElementById('AuthSection').classList.remove('hidden');
     document.getElementById('AppSection').classList.add('hidden');
-    AuthController.showLoginForm();
+    LoginController.showLoginForm();
 }
 
 // ── Init all controllers ──
-AuthController.init(
+LoginController.init(
     (user) => showApp(user),   // on login success
     () => showAuth()       // on logout
 );

@@ -4,7 +4,7 @@ import {genId, toast, confirmDlg, regex, markValid, markInvalid, clearMarks} fro
 
 let currentUser = null;
 
-const AuthController = {
+const LoginController = {
 
     getCurrentUser: () => currentUser,
 
@@ -12,20 +12,30 @@ const AuthController = {
         document.getElementById('loginFormElement').addEventListener('submit', e => {
             e.preventDefault();
             const email = document.getElementById('loginEmail').value.trim();
-            const pass  = document.getElementById('loginPassword').value;
+            const pass = document.getElementById('loginPassword').value;
             let valid = true;
 
-            if (!email) { markInvalid('loginEmail', 'Email is required.'); valid = false; }
-            else if (!regex.isValidEmail(email)) { markInvalid('loginEmail', 'Enter a valid email address.'); valid = false; }
-            else { markValid('loginEmail'); }
+            if (!email) {
+                markInvalid('loginEmail', 'Email is required.');
+                valid = false;
+            } else if (!regex.isValidEmail(email)) {
+                markInvalid('loginEmail', 'Enter a valid email address.');
+                valid = false;
+            } else {
+                markValid('loginEmail');
+            }
 
-            if (!pass) { markInvalid('loginPassword', 'Password is required.'); valid = false; }
-            else { markValid('loginPassword'); }
+            if (!pass) {
+                markInvalid('loginPassword', 'Password is required.');
+                valid = false;
+            } else {
+                markValid('loginPassword');
+            }
 
             if (!valid) return;
 
             const users = db.get('pos_users');
-            const user  = users.find(u => u.email === email && u.password === pass);
+            const user = users.find(u => u.email === email && u.password === pass);
             if (user) {
                 currentUser = user;
                 clearMarks('loginEmail', 'loginPassword');
@@ -43,32 +53,59 @@ const AuthController = {
         document.getElementById('registerFormElement').addEventListener('submit', e => {
             e.preventDefault();
             const username = document.getElementById('registerUsername').value.trim();
-            const email    = document.getElementById('registerEmail').value.trim();
-            const pass     = document.getElementById('registerPassword').value;
-            const conf     = document.getElementById('confirmPassword').value;
+            const email = document.getElementById('registerEmail').value.trim();
+            const pass = document.getElementById('registerPassword').value;
+            const conf = document.getElementById('confirmPassword').value;
             let valid = true;
 
             // Username
-            if (!username) { markInvalid('registerUsername', 'Username is required.'); valid = false; }
-            else if (username.length < 3) { markInvalid('registerUsername', 'Username must be at least 3 characters.'); valid = false; }
-            else { markValid('registerUsername'); }
+            if (!username) {
+                markInvalid('registerUsername', 'Username is required.');
+                valid = false;
+            } else if (username.length < 3) {
+                markInvalid('registerUsername', 'Username must be at least 3 characters.');
+                valid = false;
+            } else {
+                markValid('registerUsername');
+            }
 
             // Email
-            if (!email) { markInvalid('registerEmail', 'Email is required.'); valid = false; }
-            else if (!regex.isValidEmail(email)) { markInvalid('registerEmail', 'Enter a valid email address.'); valid = false; }
-            else { markValid('registerEmail'); }
+            if (!email) {
+                markInvalid('registerEmail', 'Email is required.');
+                valid = false;
+            } else if (!regex.isValidEmail(email)) {
+                markInvalid('registerEmail', 'Enter a valid email address.');
+                valid = false;
+            } else {
+                markValid('registerEmail');
+            }
 
             // Password
-            if (!pass) { markInvalid('registerPassword', 'Password is required.'); valid = false; }
-            else if (!regex.isValidPassword(pass)) { markInvalid('registerPassword', 'Password must be at least 6 characters.'); valid = false; }
-            else { markValid('registerPassword'); }
+            if (!pass) {
+                markInvalid('registerPassword', 'Password is required.');
+                valid = false;
+            } else if (!regex.isValidPassword(pass)) {
+                markInvalid('registerPassword', 'Password must be at least 6 characters.');
+                valid = false;
+            } else {
+                markValid('registerPassword');
+            }
 
             // Confirm
-            if (!conf) { markInvalid('confirmPassword', 'Please confirm your password.'); valid = false; }
-            else if (pass && conf !== pass) { markInvalid('confirmPassword', 'Passwords do not match.'); valid = false; }
-            else if (pass && conf === pass) { markValid('confirmPassword'); }
+            if (!conf) {
+                markInvalid('confirmPassword', 'Please confirm your password.');
+                valid = false;
+            } else if (pass && conf !== pass) {
+                markInvalid('confirmPassword', 'Passwords do not match.');
+                valid = false;
+            } else if (pass && conf === pass) {
+                markValid('confirmPassword');
+            }
 
-            if (!valid) { toast('warning', 'Validation Failed', 'Fix the highlighted fields.'); return; }
+            if (!valid) {
+                toast('warning', 'Validation Failed', 'Fix the highlighted fields.');
+                return;
+            }
 
             const users = db.get('pos_users');
             if (users.find(u => u.email === email)) {
@@ -78,9 +115,9 @@ const AuthController = {
             }
             users.push({id: genId('USR'), username, email, password: pass});
             db.set('pos_users', users);
-            clearMarks('registerUsername','registerEmail','registerPassword','confirmPassword');
+            clearMarks('registerUsername', 'registerEmail', 'registerPassword', 'confirmPassword');
             toast('success', 'Registered!', 'You can now login');
-            AuthController.showLoginForm();
+            LoginController.showLoginForm();
         });
     },
 
@@ -103,15 +140,15 @@ const AuthController = {
         document.getElementById('loginForm').classList.add('hidden');
         document.getElementById('registerForm').classList.remove('hidden');
         document.getElementById('registerFormElement').reset();
-        clearMarks('registerUsername','registerEmail','registerPassword','confirmPassword');
+        clearMarks('registerUsername', 'registerEmail', 'registerPassword', 'confirmPassword');
     },
 
     init: (onLoginSuccess, onLogout) => {
-        AuthController.login(onLoginSuccess);
-        AuthController.register();
-        document.getElementById('showRegister').addEventListener('click', AuthController.showRegisterForm);
-        document.getElementById('showLogin').addEventListener('click', AuthController.showLoginForm);
-        document.getElementById('logout_nav').addEventListener('click', () => AuthController.logout(onLogout));
+        LoginController.login(onLoginSuccess);
+        LoginController.register();
+        document.getElementById('showRegister').addEventListener('click', LoginController.showRegisterForm);
+        document.getElementById('showLogin').addEventListener('click', LoginController.showLoginForm);
+        document.getElementById('logout_nav').addEventListener('click', () => LoginController.logout(onLogout));
 
         // Live blur validation for register
         document.getElementById('registerPassword').addEventListener('blur', () => {
@@ -136,4 +173,4 @@ const AuthController = {
     }
 };
 
-export default AuthController;
+export default LoginController;
