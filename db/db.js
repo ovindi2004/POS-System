@@ -1,30 +1,19 @@
-//---------------------Customer DB---------------------
-let customer_db = JSON.parse(localStorage.getItem('pos_customers') || '[]');
 
-//---------------------Item DB---------------------
-let item_db = JSON.parse(localStorage.getItem('pos_items') || '[]');
+//---------------------customer db--------------------
+let customer_db = [];
 
-//---------------------Order DB---------------------
-let order_db = JSON.parse(localStorage.getItem('pos_orders') || '[]');
+//---------------------item db------------------------
+let item_db = [];
 
-//---------------------User DB---------------------
-let user_db = JSON.parse(localStorage.getItem('pos_users') || '[]');
+//---------------------order db-----------------------
+let order_db = [];
 
-//---------------------Save Functions---------------------
-function saveCustomers() {
-    localStorage.setItem('pos_customers', JSON.stringify(customer_db));
-}
+//---------------------user db------------------------
+let user_db = [];
 
-function saveItems() {
-    localStorage.setItem('pos_items', JSON.stringify(item_db));
-}
-
-function saveOrders() {
-    localStorage.setItem('pos_orders', JSON.stringify(order_db));
-}
-
-function saveUsers() {
-    localStorage.setItem('pos_users', JSON.stringify(user_db));
-}
-
-export {customer_db, item_db, order_db, user_db, saveCustomers, saveItems, saveOrders, saveUsers};
+export {
+    customer_db,
+    item_db,
+    order_db,
+    user_db
+};
