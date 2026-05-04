@@ -1,8 +1,39 @@
-// ── UTILITIES ──
 
-// ── ID Generator ──
 export function genId(prefix) {
-    return prefix + '-' + Date.now().toString().slice(-6);
+
+    const keyMap = {
+        'C':   'pos_customers',
+        'I':   'pos_items',
+        'ORD': 'pos_orders'
+    };
+    const storageKey = keyMap[prefix];
+    let nextNum = 1;
+
+    if (storageKey) {
+        try {
+            const raw = localStorage.getItem(storageKey);
+            const list = raw ? JSON.parse(raw) : [];
+
+            // Orders use 'orderId' field; customers & items use 'id'
+            const idField = prefix === 'ORD' ? 'orderId' : 'id';
+            const nums = list
+                .map(item => {
+                    const idVal = item[idField] || '';
+                    const match = idVal.match(new RegExp('^' + prefix + '-(\\d+)$'));
+                    return match ? parseInt(match[1], 10) : 0;
+                })
+                .filter(n => n > 0);
+
+            if (nums.length > 0) {
+                nextNum = Math.max(...nums) + 1;
+            }
+        } catch (e) {
+            nextNum = 1;
+        }
+    }
+
+    // Zero-pad to 3 digits: C-001, I-001, ORD-001
+    return prefix + '-' + String(nextNum).padStart(3, '0');
 }
 
 // ── Toast notification (SweetAlert2) ──
