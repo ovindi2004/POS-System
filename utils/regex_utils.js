@@ -60,8 +60,53 @@ export function confirmDlg(title, text, cb) {
 
 // ── Regex validators ──
 export const regex = {
-    email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-    phone: /^[0-9+\-\s]{7,15}$/,
-    isValidEmail: (email) => regex.email.test(email),
-    isValidPhone: (phone) => regex.phone.test(phone)
+    email:     /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+    phone:     /^\d{10}$/,
+    name:      /^[a-zA-Z\s'\-]{2,50}$/,
+    price:     /^\d+(\.\d{1,2})?$/,
+    qty:       /^[1-9]\d*$/,
+    password:  /^.{6,}$/,
+    discount:  /^(100|[1-9]?\d)$/,
+
+    isValidEmail:    (v) => regex.email.test(v.trim()),
+    isValidPhone:    (v) => regex.phone.test(v.trim()),
+    isValidName:     (v) => regex.name.test(v.trim()),
+    isValidPrice:    (v) => regex.price.test(v.trim()) && parseFloat(v) > 0,
+    isValidQty:      (v) => regex.qty.test(String(v).trim()),
+    isValidPassword: (v) => regex.password.test(v),
+    isValidDiscount: (v) => v === '' || v === '0' || regex.discount.test(String(v)),
 };
+
+// ── Field highlight helpers ──
+export function markInvalid(id, msg) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.classList.add('is-invalid');
+    el.classList.remove('is-valid');
+    let fb = el.parentElement.querySelector('.invalid-feedback');
+    if (!fb) {
+        fb = document.createElement('div');
+        fb.className = 'invalid-feedback';
+        el.parentElement.appendChild(fb);
+    }
+    fb.textContent = msg;
+}
+
+export function markValid(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.classList.remove('is-invalid');
+    el.classList.add('is-valid');
+    const fb = el.parentElement.querySelector('.invalid-feedback');
+    if (fb) fb.textContent = '';
+}
+
+export function clearMarks(...ids) {
+    ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.classList.remove('is-invalid', 'is-valid');
+        const fb = el.parentElement.querySelector('.invalid-feedback');
+        if (fb) fb.textContent = '';
+    });
+}

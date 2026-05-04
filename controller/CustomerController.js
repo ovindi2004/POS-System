@@ -1,10 +1,41 @@
 // ── CUSTOMER CONTROLLER ──
 import CustomerModel from '../model/CustomerModel.js';
-import {genId, toast, confirmDlg} from '../utils/regex_utils.js';
+import {genId, toast, confirmDlg, regex, markValid, markInvalid, clearMarks} from '../utils/regex_utils.js';
+
+const FIELDS = ['customerId', 'firstName', 'lastName', 'address', 'email', 'contact'];
+
+function validateCustomer() {
+    const fn   = document.getElementById('firstName').value.trim();
+    const ln   = document.getElementById('lastName').value.trim();
+    const em   = document.getElementById('email').value.trim();
+    const ct   = document.getElementById('contact').value.trim();
+    const addr = document.getElementById('address').value.trim();
+    let valid = true;
+
+    if (!fn) { markInvalid('firstName', 'First name is required.'); valid = false; }
+    else if (!regex.isValidName(fn)) { markInvalid('firstName', 'Only letters, spaces, hyphens & apostrophes (2–50 chars).'); valid = false; }
+    else { markValid('firstName'); }
+
+    if (!ln) { markInvalid('lastName', 'Last name is required.'); valid = false; }
+    else if (!regex.isValidName(ln)) { markInvalid('lastName', 'Only letters, spaces, hyphens & apostrophes (2–50 chars).'); valid = false; }
+    else { markValid('lastName'); }
+
+    if (addr && addr.length < 5) { markInvalid('address', 'Address must be at least 5 characters.'); valid = false; }
+    else { markValid('address'); }
+
+    if (!em) { markInvalid('email', 'Email is required.'); valid = false; }
+    else if (!regex.isValidEmail(em)) { markInvalid('email', 'Enter a valid email (e.g. user@example.com).'); valid = false; }
+    else { markValid('email'); }
+
+    if (!ct) { markInvalid('contact', 'Contact number is required.'); valid = false; }
+    else if (!regex.isValidPhone(ct)) { markInvalid('contact', 'Phone number must be exactly 10 digits.'); valid = false; }
+    else { markValid('contact'); }
+
+    return valid;
+}
 
 const CustomerController = {
 
-    // ── Render table ──
     render: (list) => {
         const tbody = document.getElementById('customerTableBody');
         if (!list) list = CustomerModel.getAll();
@@ -16,102 +47,74 @@ const CustomerController = {
             : `<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:30px">No customers found</td></tr>`;
     },
 
-    // ── Select row → fill form ──
     select: (id) => {
         const c = CustomerModel.findById(id);
         if (!c) return;
         document.getElementById('customerId').value = c.id;
-        document.getElementById('firstName').value = c.firstName;
-        document.getElementById('lastName').value = c.lastName;
-        document.getElementById('address').value = c.address;
-        document.getElementById('email').value = c.email;
-        document.getElementById('contact').value = c.contact;
+        document.getElementById('firstName').value  = c.firstName;
+        document.getElementById('lastName').value   = c.lastName;
+        document.getElementById('address').value    = c.address;
+        document.getElementById('email').value      = c.email;
+        document.getElementById('contact').value    = c.contact;
+        clearMarks(...FIELDS);
     },
 
-    // ── Clear form ──
     clear: () => {
-        ['customerId', 'firstName', 'lastName', 'address', 'email', 'contact']
-            .forEach(id => document.getElementById(id).value = '');
+        FIELDS.forEach(id => document.getElementById(id).value = '');
         document.getElementById('customerId').value = genId('C');
+        clearMarks(...FIELDS);
     },
 
-    // ── Save ──
     save: () => {
-        const fn = document.getElementById('firstName').value.trim();
-        const ln = document.getElementById('lastName').value.trim();
-        const em = document.getElementById('email').value.trim();
-        const ct = document.getElementById('contact').value.trim();
-        if (!fn || !ln || !em || !ct) {
-            toast('warning', 'Required', 'Fill First Name, Last Name, Email & Contact');
-            return;
-        }
+        if (!validateCustomer()) { toast('warning', 'Validation Failed', 'Fix the highlighted fields.'); return; }
         const result = CustomerModel.save({
             id: document.getElementById('customerId').value.trim() || genId('C'),
-            firstName: fn, lastName: ln,
-            address: document.getElementById('address').value.trim(),
-            email: em, contact: ct
+            firstName: document.getElementById('firstName').value.trim(),
+            lastName:  document.getElementById('lastName').value.trim(),
+            address:   document.getElementById('address').value.trim(),
+            email:     document.getElementById('email').value.trim(),
+            contact:   document.getElementById('contact').value.trim()
         });
-        if (!result.success) {
-            toast('error', 'Error', result.message);
-            return;
-        }
+        if (!result.success) { toast('error', 'Error', result.message); return; }
         CustomerController.render();
         CustomerController.clear();
         toast('success', 'Customer Saved!');
     },
 
-    // ── Update ──
     update: () => {
         const id = document.getElementById('customerId').value.trim();
-        if (!id) {
-            toast('warning', 'Select', 'Click a row to select a customer first');
-            return;
-        }
+        if (!id) { toast('warning', 'Select', 'Click a row to select a customer first'); return; }
+        if (!validateCustomer()) { toast('warning', 'Validation Failed', 'Fix the highlighted fields.'); return; }
         const result = CustomerModel.update(id, {
             firstName: document.getElementById('firstName').value.trim(),
-            lastName: document.getElementById('lastName').value.trim(),
-            address: document.getElementById('address').value.trim(),
-            email: document.getElementById('email').value.trim(),
-            contact: document.getElementById('contact').value.trim()
+            lastName:  document.getElementById('lastName').value.trim(),
+            address:   document.getElementById('address').value.trim(),
+            email:     document.getElementById('email').value.trim(),
+            contact:   document.getElementById('contact').value.trim()
         });
-        if (!result.success) {
-            toast('error', 'Error', result.message);
-            return;
-        }
+        if (!result.success) { toast('error', 'Error', result.message); return; }
         CustomerController.render();
         toast('success', 'Customer Updated!');
     },
 
-    // ── Delete ──
     delete: () => {
         const id = document.getElementById('customerId').value.trim();
-        if (!id) {
-            toast('warning', 'Select', 'Click a row first');
-            return;
-        }
+        if (!id) { toast('warning', 'Select', 'Click a row first'); return; }
         confirmDlg('Delete Customer?', 'This cannot be undone.', () => {
             const result = CustomerModel.delete(id);
-            if (!result.success) {
-                toast('error', 'Error', result.message);
-                return;
-            }
+            if (!result.success) { toast('error', 'Error', result.message); return; }
             CustomerController.render();
             CustomerController.clear();
             toast('success', 'Customer Deleted!');
         });
     },
 
-    // ── Search ──
     search: () => {
         const q = document.getElementById('customer_search').value.trim();
-        if (!q) {
-            CustomerController.render();
-            return;
-        }
+        if (!q) { CustomerController.render(); return; }
         CustomerController.render(CustomerModel.findByName(q));
     },
 
-    // ── Init ──
     init: () => {
         document.getElementById('customerSaveButton').addEventListener('click', CustomerController.save);
         document.getElementById('customerUpdateButton').addEventListener('click', CustomerController.update);
@@ -122,6 +125,31 @@ const CustomerController = {
             if (e.key === 'Enter') CustomerController.search();
             if (!e.target.value) CustomerController.render();
         });
+
+        // Live blur validation
+        ['firstName','lastName','email','contact','address'].forEach(id => {
+            document.getElementById(id).addEventListener('blur', () => {
+                const val = document.getElementById(id).value.trim();
+                switch (id) {
+                    case 'firstName': case 'lastName':
+                        if (!val) markInvalid(id, 'This field is required.');
+                        else if (!regex.isValidName(val)) markInvalid(id, 'Only letters, spaces, hyphens & apostrophes.');
+                        else markValid(id); break;
+                    case 'email':
+                        if (!val) markInvalid(id, 'Email is required.');
+                        else if (!regex.isValidEmail(val)) markInvalid(id, 'Enter a valid email address.');
+                        else markValid(id); break;
+                    case 'contact':
+                        if (!val) markInvalid(id, 'Contact is required.');
+                        else if (!regex.isValidPhone(val)) markInvalid(id, 'Phone number must be exactly 10 digits.');
+                        else markValid(id); break;
+                    case 'address':
+                        if (val && val.length < 5) markInvalid(id, 'Address must be at least 5 characters.');
+                        else markValid(id); break;
+                }
+            });
+        });
+
         CustomerController.clear();
         CustomerController.render();
     }
