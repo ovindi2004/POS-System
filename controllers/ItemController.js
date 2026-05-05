@@ -1,5 +1,5 @@
 // ===================================ITEM CONTROLLER ===============================
-import ItemModel from '../models/ItemModel.js';
+import ItemModel from '../model/ItemModel.js';
 import {genId, toast, confirmDlg} from '../utils/regex_utils.js';
 
 const ItemController = {
