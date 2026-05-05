@@ -21,3 +21,4 @@ function validateCustomer() {
     else if (!regex.isValidName(fn)) { markInvalid('firstName', 'Only letters, spaces, hyphens & apostrophes (2–50 chars).'); valid = false; }
     else { markValid('firstName'); }
 
+
