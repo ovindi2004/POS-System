@@ -1,4 +1,4 @@
-// ── MAIN APP ENTRY POINT ──
+// ================== MAIN ENTRY POINT ==================
 import LoginController from './LoginController.js';
 import DashboardController from './DashboardController.js';
 import CustomerController from './CustomerController.js';
