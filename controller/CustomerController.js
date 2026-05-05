@@ -71,6 +71,15 @@ const CustomerController = {
         clearMarks(...FIELDS);
     },
 
+    // Reset form and generate new ID
+    clear: () => {
+        FIELDS.forEach(id => document.getElementById(id).value = '');
+        document.getElementById('customerId').value = genId('C');
+        clearMarks(...FIELDS);
+    },
+
+
+
 
 };
 
