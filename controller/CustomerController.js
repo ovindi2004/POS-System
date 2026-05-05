@@ -26,3 +26,21 @@ function validateCustomer() {
     else if (!regex.isValidName(ln)) { markInvalid('lastName', 'Only letters, spaces, hyphens & apostrophes (2–50 chars).'); valid = false; }
     else { markValid('lastName'); }
 
+
+    // Address check (optional but min 5 chars if provided)
+    if (addr && addr.length < 5) { markInvalid('address', 'Address must be at least 5 characters.'); valid = false; }
+    else { markValid('address'); }
+
+    // Email check
+    if (!em) { markInvalid('email', 'Email is required.'); valid = false; }
+    else if (!regex.isValidEmail(em)) { markInvalid('email', 'Enter a valid email (e.g. user@example.com).'); valid = false; }
+    else { markValid('email'); }
+
+    // Contact number check
+    if (!ct) { markInvalid('contact', 'Contact number is required.'); valid = false; }
+    else if (!regex.isValidPhone(ct)) { markInvalid('contact', 'Phone number must be exactly 10 digits.'); valid = false; }
+    else { markValid('contact'); }
+
+    return valid;
+}
+
