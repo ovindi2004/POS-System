@@ -1,7 +1,7 @@
 // ── ORDER CONTROLLER ──
-import OrderModel from '../model/OrderModel.js';
-import ItemModel from '../model/ItemModel.js';
-import CustomerModel from '../model/CustomerModel.js';
+import OrderModel from '../models/OrderModel.js';
+import ItemModel from '../models/ItemModel.js';
+import CustomerModel from '../models/CustomerModel.js';
 import ItemController from './ItemController.js';
 import {genId, toast} from '../utils/regex_utils.js';
 

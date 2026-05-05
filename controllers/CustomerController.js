@@ -1,5 +1,5 @@
 // ── CUSTOMER CONTROLLER ──
-import CustomerModel from '../model/CustomerModel.js';
+import CustomerModel from '../models/CustomerModel.js';
 import {genId, toast, confirmDlg, regex, markValid, markInvalid, clearMarks} from '../utils/regex_utils.js';
 
 const FIELDS = ['customerId', 'firstName', 'lastName', 'address', 'email', 'contact'];

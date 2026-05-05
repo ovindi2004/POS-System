@@ -1,5 +1,5 @@
 // ── ORDER DETAILS CONTROLLER ──
-import OrderModel from '../model/OrderModel.js';
+import OrderModel from '../models/OrderModel.js';
 
 const OrderDetailsController = {
 
