@@ -1,4 +1,4 @@
-// ── AUTH CONTROLLER ──
+// ===========================LOGINCONTROLLER ===============================
 import db from '../dbs/database.js';
 import {genId, toast, confirmDlg, regex, markValid, markInvalid, clearMarks} from '../utils/regex_utils.js';
 
