@@ -1,4 +1,4 @@
-// ── ORDER DETAILS CONTROLLER ──
+// ===================== ORDER DETAILS CONTROLLER =====================
 import OrderModel from '../models/OrderModel.js';
 
 const OrderDetailsController = {
