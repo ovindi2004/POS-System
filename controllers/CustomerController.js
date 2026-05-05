@@ -1,4 +1,4 @@
-// ── CUSTOMER CONTROLLER ──
+// =================CUSTOMER CONTROLLER =================
 import CustomerModel from '../models/CustomerModel.js';
 import {genId, toast, confirmDlg, regex, markValid, markInvalid, clearMarks} from '../utils/regex_utils.js';
 
