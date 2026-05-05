@@ -94,6 +94,22 @@ const CustomerController = {
         toast('success', 'Customer Saved!');
     },
 
+    // Update existing customer by ID
+    update: () => {
+        const id = document.getElementById('customerId').value.trim();
+        if (!id) { toast('warning', 'Select', 'Click a row to select a customer first'); return; }
+        if (!validateCustomer()) { toast('warning', 'Validation Failed', 'Fix the highlighted fields.'); return; }
+        const result = CustomerModel.update(id, {
+            firstName: document.getElementById('firstName').value.trim(),
+            lastName:  document.getElementById('lastName').value.trim(),
+            address:   document.getElementById('address').value.trim(),
+            email:     document.getElementById('email').value.trim(),
+            contact:   document.getElementById('contact').value.trim()
+        });
+        if (!result.success) { toast('error', 'Error', result.message); return; }
+        CustomerController.render();
+        toast('success', 'Customer Updated!');
+    },
 
 
 
