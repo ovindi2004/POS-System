@@ -1,11 +1,13 @@
-// =========================DASHBOARD CONTROLLER =========================
+// ── DASHBOARD CONTROLLER ──
 import db from '../db/database.js';
 
+// Colors used across all charts
 const CHART_COLORS = ['#818cf8', '#34d399', '#fbbf24', '#f472b6', '#60a5fa', '#f87171', '#a78bfa', '#2dd4bf'];
 let stockChart, revenueChart, ordersChart;
 
 const DashboardController = {
 
+    // Update stat counts and rebuild charts
     update: () => {
         document.getElementById('customerCount').textContent = db.get('pos_customers').length;
         document.getElementById('itemCount').textContent = db.get('pos_items').length;
@@ -17,7 +19,7 @@ const DashboardController = {
         const items = db.get('pos_items');
         const orders = db.get('pos_orders');
 
-        // ── Stock Chart ──
+        // ── Stock Chart — top 6 items by qty (horizontal bar) ──
         const top = [...items].sort((a, b) => b.qty - a.qty).slice(0, 6);
         if (stockChart) stockChart.destroy();
         stockChart = new Chart(document.getElementById('stockChart'), {
@@ -40,7 +42,7 @@ const DashboardController = {
             }
         });
 
-        // ── Revenue Chart ──
+        // ── Revenue Chart — total revenue per item (doughnut) ──
         const revMap = {};
         orders.forEach(o => {
             revMap[o.itemId] = (revMap[o.itemId] || 0) + parseFloat(o.total);
@@ -64,11 +66,11 @@ const DashboardController = {
             },
             options: {
                 responsive: true, maintainAspectRatio: false, cutout: '62%',
-                plugins: {legend: {display: false}, tooltip: {callbacks: {label: c => ` $${c.parsed.toFixed(2)}`}}}
+                plugins: {legend: {display: false}, tooltip: {callbacks: {label: c => ` Rs. ${c.parsed.toFixed(2)}`}}}
             }
         });
 
-        // ── Orders Over Time Chart ──
+        // ── Orders Chart — unique orders per day for last 7 days (line) ──
         const days = 7, labels = [], counts = [];
         for (let i = days - 1; i >= 0; i--) {
             const d = new Date();

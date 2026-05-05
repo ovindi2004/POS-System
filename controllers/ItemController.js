@@ -1,9 +1,10 @@
-// ===================================ITEM CONTROLLER ===============================
+// ── ITEM CONTROLLER ──
 import ItemModel from '../model/ItemModel.js';
 import {genId, toast, confirmDlg} from '../utils/regex_utils.js';
 
 const ItemController = {
 
+    // Render item list into table
     render: (list) => {
         const tbody = document.getElementById('itemTableBody');
         if (!list) list = ItemModel.getAll();
@@ -11,12 +12,13 @@ const ItemController = {
             ? list.map(i => `<tr onclick="ItemController.select('${i.id}')">
                 <td><span style="color:var(--success);font-size:12px">${i.id}</span></td>
                 <td>${i.name}</td><td>${i.qty}</td>
-                <td>$${parseFloat(i.price).toFixed(2)}</td>
+                <td>Rs. ${parseFloat(i.price).toFixed(2)}</td>
                 <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${i.desc}</td>
               </tr>`).join('')
             : `<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:30px">No items found</td></tr>`;
     },
 
+    // Load selected item data into form
     select: (id) => {
         const it = ItemModel.findById(id);
         if (!it) return;
@@ -27,12 +29,14 @@ const ItemController = {
         document.getElementById('Description').value = it.desc;
     },
 
+    // Reset form and generate new item ID
     clear: () => {
         ['itemId', 'itemName', 'Quantity', 'UnitPrice', 'Description']
             .forEach(id => document.getElementById(id).value = '');
         document.getElementById('itemId').value = genId('I');
     },
 
+    // Save new item after basic validation
     save: () => {
         const name = document.getElementById('itemName').value.trim();
         const qty = document.getElementById('Quantity').value.trim();
@@ -55,6 +59,7 @@ const ItemController = {
         toast('success', 'Item Saved!');
     },
 
+    // Update existing item by ID
     update: () => {
         const id = document.getElementById('itemId').value.trim();
         if (!id) {
@@ -75,6 +80,7 @@ const ItemController = {
         toast('success', 'Item Updated!');
     },
 
+    // Delete item after confirmation
     delete: () => {
         const id = document.getElementById('itemId').value.trim();
         if (!id) {
@@ -93,6 +99,7 @@ const ItemController = {
         });
     },
 
+    // Filter items by search query
     search: () => {
         const q = document.getElementById('item_search').value.trim();
         if (!q) {
@@ -102,12 +109,14 @@ const ItemController = {
         ItemController.render(ItemModel.findByQuery(q));
     },
 
+    // Bind button events and load initial data
     init: () => {
         document.getElementById('itemSaveButton').addEventListener('click', ItemController.save);
         document.getElementById('itemUpdateButton').addEventListener('click', ItemController.update);
         document.getElementById('itemDeleteButton').addEventListener('click', ItemController.delete);
         document.getElementById('itemClearButton').addEventListener('click', ItemController.clear);
         document.getElementById('itemSearchBtn').addEventListener('click', ItemController.search);
+        // Search on Enter key or clear
         document.getElementById('item_search').addEventListener('keyup', e => {
             if (e.key === 'Enter') ItemController.search();
             if (!e.target.value) ItemController.render();
