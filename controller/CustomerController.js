@@ -21,4 +21,8 @@ function validateCustomer() {
     else if (!regex.isValidName(fn)) { markInvalid('firstName', 'Only letters, spaces, hyphens & apostrophes (2–50 chars).'); valid = false; }
     else { markValid('firstName'); }
 
+    // Last name check
+    if (!ln) { markInvalid('lastName', 'Last name is required.'); valid = false; }
+    else if (!regex.isValidName(ln)) { markInvalid('lastName', 'Only letters, spaces, hyphens & apostrophes (2–50 chars).'); valid = false; }
+    else { markValid('lastName'); }
 
