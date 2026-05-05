@@ -44,3 +44,23 @@ function validateCustomer() {
     return valid;
 }
 
+const CustomerController = {
+
+    // Render customer list into table
+    render: (list) => {
+        const tbody = document.getElementById('customerTableBody');
+        if (!list) list = CustomerModel.getAll();
+        tbody.innerHTML = list.length
+            ? list.map(c => `<tr onclick="CustomerController.select('${c.id}')">
+                <td><span style="color:var(--primary);font-size:12px">${c.id}</span></td>
+                <td>${c.firstName}</td><td>${c.lastName}</td><td>${c.email}</td><td>${c.contact}</td>
+              </tr>`).join('')
+            : `<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:30px">No customers found</td></tr>`;
+    },
+
+
+
+};
+
+window.CustomerController = CustomerController;
+export default CustomerController;
