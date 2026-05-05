@@ -110,6 +110,20 @@ const CustomerController = {
         CustomerController.render();
         toast('success', 'Customer Updated!');
     },
+    // Delete customer after confirmation
+    delete: () => {
+        const id = document.getElementById('customerId').value.trim();
+        if (!id) { toast('warning', 'Select', 'Click a row first'); return; }
+        confirmDlg('Delete Customer?', 'This cannot be undone.', () => {
+            const result = CustomerModel.delete(id);
+            if (!result.success) { toast('error', 'Error', result.message); return; }
+            CustomerController.render();
+            CustomerController.clear();
+            toast('success', 'Customer Deleted!');
+        });
+    },
+
+
 
 
 
