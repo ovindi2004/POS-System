@@ -1,5 +1,3 @@
-// =============== CUSTOMER CONTROLLER ============================
-
 // ── CUSTOMER CONTROLLER ──
 import CustomerModel from '../model/CustomerModel.js';
 import {genId, toast, confirmDlg, regex, markValid, markInvalid, clearMarks} from '../utils/regex_utils.js';
@@ -25,7 +23,6 @@ function validateCustomer() {
     if (!ln) { markInvalid('lastName', 'Last name is required.'); valid = false; }
     else if (!regex.isValidName(ln)) { markInvalid('lastName', 'Only letters, spaces, hyphens & apostrophes (2–50 chars).'); valid = false; }
     else { markValid('lastName'); }
-
 
     // Address check (optional but min 5 chars if provided)
     if (addr && addr.length < 5) { markInvalid('address', 'Address must be at least 5 characters.'); valid = false; }
@@ -77,6 +74,7 @@ const CustomerController = {
         document.getElementById('customerId').value = genId('C');
         clearMarks(...FIELDS);
     },
+
     // Save new customer
     save: () => {
         if (!validateCustomer()) { toast('warning', 'Validation Failed', 'Fix the highlighted fields.'); return; }
@@ -110,6 +108,7 @@ const CustomerController = {
         CustomerController.render();
         toast('success', 'Customer Updated!');
     },
+
     // Delete customer after confirmation
     delete: () => {
         const id = document.getElementById('customerId').value.trim();
@@ -123,10 +122,55 @@ const CustomerController = {
         });
     },
 
+    // Search customers by name
+    search: () => {
+        const q = document.getElementById('customer_search').value.trim();
+        if (!q) { CustomerController.render(); return; }
+        CustomerController.render(CustomerModel.findByName(q));
+    },
 
+    // Bind events and initialize form
+    init: () => {
+        document.getElementById('customerSaveButton').addEventListener('click', CustomerController.save);
+        document.getElementById('customerUpdateButton').addEventListener('click', CustomerController.update);
+        document.getElementById('customerDeleteButton').addEventListener('click', CustomerController.delete);
+        document.getElementById('customerClearButton').addEventListener('click', CustomerController.clear);
+        document.getElementById('customerSearchBtn').addEventListener('click', CustomerController.search);
 
+        // Search on Enter key or clear
+        document.getElementById('customer_search').addEventListener('keyup', e => {
+            if (e.key === 'Enter') CustomerController.search();
+            if (!e.target.value) CustomerController.render();
+        });
 
+        // Live validation on field blur
+        ['firstName','lastName','email','contact','address'].forEach(id => {
+            document.getElementById(id).addEventListener('blur', () => {
+                const val = document.getElementById(id).value.trim();
+                switch (id) {
+                    case 'firstName': case 'lastName':
+                        if (!val) markInvalid(id, 'This field is required.');
+                        else if (!regex.isValidName(val)) markInvalid(id, 'Only letters, spaces, hyphens & apostrophes.');
+                        else markValid(id); break;
+                    case 'email':
+                        if (!val) markInvalid(id, 'Email is required.');
+                        else if (!regex.isValidEmail(val)) markInvalid(id, 'Enter a valid email address.');
+                        else markValid(id); break;
+                    case 'contact':
+                        if (!val) markInvalid(id, 'Contact is required.');
+                        else if (!regex.isValidPhone(val)) markInvalid(id, 'Phone number must be exactly 10 digits.');
+                        else markValid(id); break;
+                    case 'address':
+                        if (val && val.length < 5) markInvalid(id, 'Address must be at least 5 characters.');
+                        else markValid(id); break;
+                }
+            });
+        });
 
+        // Load initial data
+        CustomerController.clear();
+        CustomerController.render();
+    }
 };
 
 window.CustomerController = CustomerController;
