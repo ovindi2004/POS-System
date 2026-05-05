@@ -1,5 +1,5 @@
 // ── ORDER MODEL ──
-import db from '../db/database.js';
+import db from '../dbs/database.js';
 
 const OrderModel = {
 

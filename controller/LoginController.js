@@ -1,5 +1,5 @@
 // ==================== LoginController ====================
-import db from '../db/database.js';
+import db from '../dbs/database.js';
 import {genId, toast, confirmDlg, regex, markValid, markInvalid, clearMarks} from '../utils/regex_utils.js';
 
 // Stores the currently logged-in user

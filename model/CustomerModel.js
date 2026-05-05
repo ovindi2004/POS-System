@@ -1,5 +1,5 @@
 // ── CUSTOMER MODEL ──
-import db from '../db/database.js';
+import db from '../dbs/database.js';
 import { genId } from '../utils/regex_utils.js';
 
 const CustomerModel = {

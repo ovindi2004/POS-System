@@ -1,5 +1,5 @@
 // ── DASHBOARD CONTROLLER ──
-import db from '../db/database.js';
+import db from '../dbs/database.js';
 
 const CHART_COLORS = ['#818cf8', '#34d399', '#fbbf24', '#f472b6', '#60a5fa', '#f87171', '#a78bfa', '#2dd4bf'];
 let stockChart, revenueChart, ordersChart;
