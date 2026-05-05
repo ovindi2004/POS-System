@@ -53,6 +53,7 @@ function showApp(user) {
     DashboardController.update();
 }
 
+
 function showAuth() {
     document.getElementById('AuthSection').classList.remove('hidden');
     document.getElementById('AppSection').classList.add('hidden');

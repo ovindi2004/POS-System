@@ -71,10 +71,7 @@ export const regex = {
     isValidEmail:    (v) => regex.email.test(v.trim()),
     isValidPhone:    (v) => regex.phone.test(v.trim()),
     isValidName:     (v) => regex.name.test(v.trim()),
-    isValidPrice:    (v) => regex.price.test(v.trim()) && parseFloat(v) > 0,
-    isValidQty:      (v) => regex.qty.test(String(v).trim()),
     isValidPassword: (v) => regex.password.test(v),
-    isValidDiscount: (v) => v === '' || v === '0' || regex.discount.test(String(v)),
 };
 
 // ── Field highlight helpers ──
