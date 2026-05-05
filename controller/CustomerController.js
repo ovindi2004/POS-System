@@ -58,6 +58,18 @@ const CustomerController = {
             : `<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:30px">No customers found</td></tr>`;
     },
 
+    // Load selected customer data into form
+    select: (id) => {
+        const c = CustomerModel.findById(id);
+        if (!c) return;
+        document.getElementById('customerId').value = c.id;
+        document.getElementById('firstName').value  = c.firstName;
+        document.getElementById('lastName').value   = c.lastName;
+        document.getElementById('address').value    = c.address;
+        document.getElementById('email').value      = c.email;
+        document.getElementById('contact').value    = c.contact;
+        clearMarks(...FIELDS);
+    },
 
 
 };
