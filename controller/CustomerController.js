@@ -77,6 +77,22 @@ const CustomerController = {
         document.getElementById('customerId').value = genId('C');
         clearMarks(...FIELDS);
     },
+    // Save new customer
+    save: () => {
+        if (!validateCustomer()) { toast('warning', 'Validation Failed', 'Fix the highlighted fields.'); return; }
+        const result = CustomerModel.save({
+            id: document.getElementById('customerId').value.trim() || genId('C'),
+            firstName: document.getElementById('firstName').value.trim(),
+            lastName:  document.getElementById('lastName').value.trim(),
+            address:   document.getElementById('address').value.trim(),
+            email:     document.getElementById('email').value.trim(),
+            contact:   document.getElementById('contact').value.trim()
+        });
+        if (!result.success) { toast('error', 'Error', result.message); return; }
+        CustomerController.render();
+        CustomerController.clear();
+        toast('success', 'Customer Saved!');
+    },
 
 
 
